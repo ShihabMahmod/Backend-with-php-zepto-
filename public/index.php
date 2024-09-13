@@ -2,8 +2,10 @@
 
 require '../config/database.php';
 require '../app/Controllers/FontController.php';
+require '../app/Controllers/FontGroupController.php';
 
 $fontController = new FontController($db);
+$fontGroupController = new FontGroupController($db);
 
 
 header("Access-Control-Allow-Origin: *");
@@ -26,4 +28,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET' && isset($_GET['action'])) {
     if ($_GET['action'] == 'listFonts') {
         $fontController->listFonts();
     }
+    if ($_GET['action'] == 'listFontGroups') {
+        $fontGroupController->listGroups();
+    }
 }
+
+
+
