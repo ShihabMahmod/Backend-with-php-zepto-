@@ -2,7 +2,6 @@
 
 require_once __DIR__ . '/../Models/FontGroup.php';
 
-
 class FontGroupController
 {
     private $fontGroupModel;
@@ -14,12 +13,12 @@ class FontGroupController
 
     public function createGroup()
     {
-        $data = json_decode(file_get_contents('php://input'), true);
 
-        if (isset($data['name']) && isset($data['fontIds']) && is_array($data['fontIds'])) {
-            $name = $data['name'];
-            $fontIds = $data['fontIds'];
-            $groupId = $this->fontGroupModel->createGroup($name, $fontIds);
+        if (isset($_POST['name']) && is_array($_POST['font_id'])) {
+            $name = $_POST['name'];
+            $font_ids = $_POST['font_id'];
+            $names = $_POST['names'];
+            $groupId = $this->fontGroupModel->createGroup($names,$name, $font_ids);
             echo json_encode(['success' => true, 'groupId' => $groupId]);
         } else {
             echo json_encode(['success' => false, 'message' => 'Invalid input']);
@@ -32,45 +31,30 @@ class FontGroupController
         return $this->jsonResponse($groups);
     }
 
-    public function getGroup()
+    public function getGroup($id)
     {
-        $data = json_decode(file_get_contents('php://input'), true);
-        
-        if (isset($data['id'])) {
-            $groupId = $data['id'];
-            $group = $this->fontGroupModel->getGroupById($groupId);
-            echo json_encode($group);
-        } else {
-            echo json_encode(['success' => false, 'message' => 'Invalid ID']);
-        }
+        $group = $this->fontGroupModel->getGroupById($id);
+        return $this->jsonResponse($group);
     }
 
-    public function updateGroup()
+    public function updateGroup($id)
     {
-        $data = json_decode(file_get_contents('php://input'), true);
 
-        if (isset($data['id']) && isset($data['name']) && isset($data['fontIds']) && is_array($data['fontIds'])) {
-            $id = $data['id'];
-            $name = $data['name'];
-            $fontIds = $data['fontIds'];
-            $this->fontGroupModel->updateGroup($id, $name, $fontIds);
-            echo json_encode(['success' => true]);
+        if (isset($_POST['name']) && is_array($_POST['font_id'])) {
+            $name = $_POST['name'];
+            $font_ids = $_POST['font_id'];
+            $groupId = $this->fontGroupModel->updateGroup($id,$names,$name, $font_ids);
+            echo json_encode(['success' => true, 'groupId' => $groupId]);
         } else {
             echo json_encode(['success' => false, 'message' => 'Invalid input']);
         }
     }
 
-    public function deleteGroup()
+    public function deleteGroup($id)
     {
-        //$data = json_decode(file_get_contents('php://input'), true);
-
-        if (isset($data['id'])) {
-            $id = $data['id'];
-            $this->fontGroupModel->deleteGroup($id);
-            echo json_encode(['success' => true]);
-        } else {
-            echo json_encode(['success' => false, 'message' => 'Invalid ID']);
-        }
+        $data = $this->fontGroupModel->deleteGroup($id);
+        $data = array('status'=>'success','message'=> 'Delete successfully');
+        return $this->jsonResponse($data);
     }
 
     private function jsonResponse($data)
